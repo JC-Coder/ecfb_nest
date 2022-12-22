@@ -169,7 +169,7 @@ export class AppService {
 
     // send the HTTP request to the messenger platform
     this.httpService
-      .post("https://graph.facebook.com/v6.0/me/messages?access_token=${this.PAGE_ACCESS_TOKEN}", request_body)
+      .post(`https://graph.facebook.com/v6.0/me/messages?access_token=${this.PAGE_ACCESS_TOKEN}`, request_body)
       .subscribe({
         complete: () => {
           console.log("message sent!");
