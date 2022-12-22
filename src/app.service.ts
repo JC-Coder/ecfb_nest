@@ -124,27 +124,42 @@ export class AppService {
    * @param received_postback
    */
   async handlePostback(sender_psid, received_postback) {
-    let response;
 
     // Get the payload for the postback
     let payload = received_postback.payload;
 
     // Set the response based on the postback payload
+    // Set the response based on the postback payload
     switch (payload) {
-      case "yes":
-        response = { text: "Thanks!" };
-        break;
-      case "no":
-        response = { text: "Oops, try sending another image." };
-        break;
       case "GET_STARTED":
-        let username = await this.botService.getFacebookUsername(sender_psid);
-        response = { text: `Hi there. Welcome ${username} to my tech shop` };
+      case "RESTART_CONVERSATION":
+        await this.botService.sendMessageWelcomeNewUser(sender_psid);
         break;
+      case "TALK_AGENT":
+        await this.botService.requestTalkToAgent(sender_psid);
+        break;
+      case "SHOW_HEADPHONES":
+        await this.botService.showHeadphones(sender_psid);
+        break;
+      case "SHOW_TV":
+        await this.botService.showTvs(sender_psid);
+        break;
+      case "SHOW_PLAYSTATION":
+        await this.botService.showPlaystations(sender_psid);
+        break;
+      case "BACK_TO_CATEGORIES":
+        await this.botService.sendCategories(sender_psid);
+        break;
+      case "SET_INFO_ORDER":
+        await this.botService.setInfoOrderByWebView(sender_psid);
+        break;
+      case "BACK_TO_MAIN_MENU":
+        await this.botService.backToMainMenu(sender_psid);
+        break;
+  
+      default:
+        console.log("run default switch case ");
     }
-
-    // Send the message to acknowledge the postback
-    this.callSendAPI(sender_psid, response);
   }
 
   /**
