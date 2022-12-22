@@ -43,7 +43,7 @@ export class AppService {
       // Check the webhook event is from a Page subscription
       if (body.object === "page") {
         // Iterate over each entry - there may be multiple if batched
-        body.entry.forEach(function (entry) {
+        body.entry.forEach((entry) => {
           // Gets the body of the webhook event
           let webhook_event = entry.messaging[0];
           console.log(webhook_event);
@@ -55,8 +55,10 @@ export class AppService {
           // Check if the event is a message or postback and
           // pass the event to the appropriate handler function
           if (webhook_event.message) {
+            console.log("message")
             this.handleMessage(sender_psid, webhook_event.message);
           } else if (webhook_event.postback) {
+            console.log("postback");
             this.handlePostback(sender_psid, webhook_event.postback);
           }
         });
