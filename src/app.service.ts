@@ -1,19 +1,80 @@
 import { Injectable } from "@nestjs/common";
 import request from "request";
 import * as dotenv from "dotenv";
+import { Request, Response } from "express";
 
 dotenv.config();
 
 @Injectable()
 export class AppService {
   private PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+  private VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+
+  /**
+   * Get webhook
+   */
+  getWebhook(req: Request, res: Response) {
+      // Parse the query params
+      let mode = req.query["hub.mode"];
+      let token = req.query["hub.verify_token"];
+      let challenge = req.query["hub.challenge"];
+  
+      // Check if a token and mode is in the query string of the request
+      if (mode && token) {
+        // Check the mode and token sent is correct
+        if (mode === "subscribe" && token === this.VERIFY_TOKEN) {
+          // Respond with the challenge token from the request
+          console.log("WEBHOOK_VERIFIED");
+          res.status(200).send(challenge);
+        } else {
+          // Respond with '403 Forbidden' if verify tokens do not match
+          res.sendStatus(403);
+        }
+      }
+  }
+
+  /**
+   * Post webhook
+   */
+  postWebhook(req: Request, res: Response){
+      // Parse the request body from the POST
+      let body = req.body;
+
+      // Check the webhook event is from a Page subscription
+      if (body.object === "page") {
+        // Iterate over each entry - there may be multiple if batched
+        body.entry.forEach(function (entry) {
+          // Gets the body of the webhook event
+          let webhook_event = entry.messaging[0];
+          console.log(webhook_event);
+  
+          // Get the sender PSID
+          let sender_psid = webhook_event.sender.id;
+          console.log("Sender PSID: " + sender_psid);
+  
+          // Check if the event is a message or postback and
+          // pass the event to the appropriate handler function
+          if (webhook_event.message) {
+            this.handleMessage(sender_psid, webhook_event.message);
+          } else if (webhook_event.postback) {
+            this.handlePostback(sender_psid, webhook_event.postback);
+          }
+        });
+  
+        // Return a '200 OK' response to all events
+        res.status(200).send("EVENT_RECEIVED");
+      } else {
+        // Return a '404 Not Found' if event is not from a page subscription
+        res.sendStatus(404);
+      }
+  }
 
   /**
    * Handles messages events
    * @param sender_psid
    * @param received_message
    */
-  public handleMessage(sender_psid, received_message): any {
+  handleMessage(sender_psid, received_message): any {
     let response;
 
     // Check if the message contains text
@@ -63,7 +124,7 @@ export class AppService {
    * @param sender_psid
    * @param received_postback
    */
-  public async handlePostback(sender_psid, received_postback) {
+  async handlePostback(sender_psid, received_postback) {
     let response;
 
     // Get the payload for the postback
@@ -92,7 +153,7 @@ export class AppService {
    * @param sender_psid
    * @param response
    */
-  public callSendAPI(sender_psid, response) {
+  callSendAPI(sender_psid, response) {
     // Construct the message body
     let request_body = {
       recipient: {

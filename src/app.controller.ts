@@ -8,9 +8,6 @@ dotenv.config();
 
 @Controller("")
 export class AppController {
-  private VERIFY_TOKEN = process.env.VERIFY_TOKEN;
-  private PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-
   constructor(private appService: AppService) {}
 
   /**
@@ -29,23 +26,7 @@ export class AppController {
    */
   @Get("/webhook")
   getWebhook(@Req() req: Request, @Res() res: Response): any {
-    // Parse the query params
-    let mode = req.query["hub.mode"];
-    let token = req.query["hub.verify_token"];
-    let challenge = req.query["hub.challenge"];
-
-    // Check if a token and mode is in the query string of the request
-    if (mode && token) {
-      // Check the mode and token sent is correct
-      if (mode === "subscribe" && token === this.VERIFY_TOKEN) {
-        // Respond with the challenge token from the request
-        console.log("WEBHOOK_VERIFIED");
-        res.status(200).send(challenge);
-      } else {
-        // Respond with '403 Forbidden' if verify tokens do not match
-        res.sendStatus(403);
-      }
-    }
+    return this.appService.getWebhook(req, res);
   }
 
   /**
@@ -55,36 +36,7 @@ export class AppController {
    */
   @Post("/webhook")
   postWebhook(@Req() req: Request, @Res() res: Response): any {
-    // Parse the request body from the POST
-    let body = req.body;
-
-    // Check the webhook event is from a Page subscription
-    if (body.object === "page") {
-      // Iterate over each entry - there may be multiple if batched
-      body.entry.forEach(function (entry) {
-        // Gets the body of the webhook event
-        let webhook_event = entry.messaging[0];
-        console.log(webhook_event);
-
-        // Get the sender PSID
-        let sender_psid = webhook_event.sender.id;
-        console.log("Sender PSID: " + sender_psid);
-
-        // Check if the event is a message or postback and
-        // pass the event to the appropriate handler function
-        if (webhook_event.message) {
-          this.appService.handleMessage(sender_psid, webhook_event.message);
-        } else if (webhook_event.postback) {
-          this.appService.handlePostback(sender_psid, webhook_event.postback);
-        }
-      });
-
-      // Return a '200 OK' response to all events
-      res.status(200).send("EVENT_RECEIVED");
-    } else {
-      // Return a '404 Not Found' if event is not from a page subscription
-      res.sendStatus(404);
-    }
+    return this.appService.postWebhook(req, res);
   }
 
   @Post("/set-profile")
