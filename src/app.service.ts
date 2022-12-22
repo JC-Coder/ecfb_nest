@@ -3,6 +3,7 @@ import request from "request";
 import * as dotenv from "dotenv";
 import { Request, Response } from "express";
 import { HttpService } from "@nestjs/axios";
+import { BotService } from "./bot/bot.service";
 
 dotenv.config();
 
@@ -11,7 +12,10 @@ export class AppService {
   private PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
   private VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
-  constructor(private httpService: HttpService) {}
+  constructor(
+    private httpService: HttpService,
+    private botService: BotService
+  ) {}
 
   /**
    * Get webhook
@@ -58,10 +62,8 @@ export class AppService {
         // Check if the event is a message or postback and
         // pass the event to the appropriate handler function
         if (webhook_event.message) {
-          console.log("message");
           this.handleMessage(sender_psid, webhook_event.message);
         } else if (webhook_event.postback) {
-          console.log("postback");
           this.handlePostback(sender_psid, webhook_event.postback);
         }
       });
@@ -79,44 +81,36 @@ export class AppService {
    * @param sender_psid
    * @param received_message
    */
-  handleMessage(sender_psid, received_message): any {
+  async handleMessage(
+    sender_psid,
+    received_message
+  ): Promise<Promise<Promise<any>>> {
+    // handle quick replies
+    if (
+      received_message &&
+      received_message.quick_reply &&
+      received_message.quick_reply.payload
+    ) {
+      let payload = received_message.quick_reply.payload;
+
+      if (payload === "CATEGORIES") {
+        await this.botService.sendCategories(sender_psid);
+      } else if (payload === "LOOKUP_ORDER") {
+        await this.botService.sendLookupOrder(sender_psid);
+      } else if (payload === "TALK_AGENT") {
+        await this.botService.requestTalkToAgent(sender_psid);
+      }
+
+      return;
+    }
+
     let response;
 
     // Check if the message contains text
     if (received_message.text) {
       // Create the payload for a basic text message
       response = {
-        text: `You sent the message: "${received_message.text}". Now send me an image!`,
-      };
-    } else if (received_message.attachments) {
-      // Get the URL of the message attachment
-      let attachment_url = received_message.attachments[0].payload.url;
-      response = {
-        attachment: {
-          type: "template",
-          payload: {
-            template_type: "generic",
-            elements: [
-              {
-                title: "Is this the right picture?",
-                subtitle: "Tap a button to answer.",
-                image_url: attachment_url,
-                buttons: [
-                  {
-                    type: "postback",
-                    title: "Yes!",
-                    payload: "yes",
-                  },
-                  {
-                    type: "postback",
-                    title: "No!",
-                    payload: "no",
-                  },
-                ],
-              },
-            ],
-          },
-        },
+        text: `Sorry i don't understand that command`,
       };
     }
 
@@ -144,8 +138,8 @@ export class AppService {
         response = { text: "Oops, try sending another image." };
         break;
       case "GET_STARTED":
-          let username = await this.getFacebookUsername(sender_psid);
-          response = {text: `Hi there. Welcome ${username} to my tech shop`}
+        let username = await this.botService.getFacebookUsername(sender_psid);
+        response = { text: `Hi there. Welcome ${username} to my tech shop` };
         break;
     }
 
@@ -188,6 +182,8 @@ export class AppService {
       try {
         let url = `https://graph.facebook.com/v15.0/me/messenger_profile?access_token=${this.PAGE_ACCESS_TOKEN}`;
 
+        // note if error , comment out the nested persisted menu
+
         let request_body = {
           get_started: { payload: "GET_STARTED" },
           persistent_menu: [
@@ -197,24 +193,24 @@ export class AppService {
               call_to_actions: [
                 {
                   type: "postback",
-                  title: "Talk to an agent",
-                  payload: "CARE_HELP",
+                  title: "Talk to customer service",
+                  payload: "TALK_AGENT",
                 },
                 {
                   type: "postback",
-                  title: "Outfit suggestions",
-                  payload: "CURATION",
+                  title: "Restart conversation",
+                  payload: "RESTART_CONVERSATION",
                 },
                 {
                   type: "web_url",
-                  title: "Shop now",
-                  url: "https://www.originalcoastclothing.com/",
+                  title: "Visit developer",
+                  url: "https://jc-coder.vercel.app/",
                   webview_height_ratio: "full",
                 },
               ],
             },
           ],
-          whitelisted_domains: ["https://ecfb-nest-jc.adaptable.app"],
+          whitelisted_domains: ["https://ecfb-nest-jc.adaptable.app/"],
         };
 
         // send the HTTP request to the messenger platform
@@ -232,37 +228,5 @@ export class AppService {
     });
   }
 
-
-  /**
-   * Get username of user
-   */
-  async getFacebookUsername(sender_psid){
-    return new Promise(async (resolve, reject) => {
-      try {
-        let url = `https://graph.facebook.com/${sender_psid}?fields=first_name,last_name,profile_pic&access_token=${this.PAGE_ACCESS_TOKEN}`;
-        const res = await this.httpService.get(url).toPromise();
-        const body = res.data;
-        let username = `${body.last_name} ${body.first_name}`;
-        resolve(username);
-
-        // request(
-        //   {
-        //     uri: url,
-        //     method: "GET",
-        //   },
-        //   (err, res, body) => {
-        //     if (!err) {
-        //       body = JSON.parse(body);
-        //       let username = `${body.last_name} ${body.first_name}`;
-        //       resolve(username);
-        //     } else {
-        //       reject("Unable to send message:" + err);
-        //     }
-        //   }
-        // );
-      } catch (e) {
-        reject(e);
-      }
-    });
-  };
+ 
 }
