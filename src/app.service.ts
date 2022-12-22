@@ -40,7 +40,7 @@ export class AppService {
                   ],
                 },
               ],
-              whitelisted_domains: ["https://ecfb.adaptable.app"],
+              whitelisted_domains: ["https://ecfb-nest-jc.adaptable.app"],
             };
       
             // Send the HTTP request to the Messenger Platform
