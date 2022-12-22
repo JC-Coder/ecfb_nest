@@ -144,8 +144,8 @@ export class AppService {
         response = { text: "Oops, try sending another image." };
         break;
       case "GET_STARTED":
-        //   let username = await homepageService.getFacebookUsername(sender_psid);
-        //   response = {text: `Hi there. Welcome ${username} to my tech shop`}
+          let username = await this.getFacebookUsername(sender_psid);
+          response = {text: `Hi there. Welcome ${username} to my tech shop`}
         break;
     }
 
@@ -169,7 +169,10 @@ export class AppService {
 
     // send the HTTP request to the messenger platform
     this.httpService
-      .post(`https://graph.facebook.com/v6.0/me/messages?access_token=${this.PAGE_ACCESS_TOKEN}`, request_body)
+      .post(
+        `https://graph.facebook.com/v6.0/me/messages?access_token=${this.PAGE_ACCESS_TOKEN}`,
+        request_body
+      )
       .subscribe({
         complete: () => {
           console.log("message sent!");
@@ -178,23 +181,6 @@ export class AppService {
           console.error("Unable to send message:" + err);
         },
       });
-
-    // // Send the HTTP request to the Messenger Platform
-    // request(
-    //   {
-    //     uri: "https://graph.facebook.com/v6.0/me/messages",
-    //     qs: { access_token: this.PAGE_ACCESS_TOKEN },
-    //     method: "POST",
-    //     json: request_body,
-    //   },
-    //   (err, res, body) => {
-    //     if (!err) {
-    //       console.log("message sent!");
-    //     } else {
-    //       console.error("Unable to send message:" + err);
-    //     }
-    //   }
-    // );
   }
 
   async handleSetupProfileAPI(): Promise<any> {
@@ -232,27 +218,43 @@ export class AppService {
         };
 
         // send the HTTP request to the messenger platform
-        this.httpService
-          .post(url, request_body)
-          .subscribe({
-            complete: () => {
-                resolve("Done");
-            },
-            error: (err) => {
-                reject("Unable to send message:" + err);
-            },
-          });
+        this.httpService.post(url, request_body).subscribe({
+          complete: () => {
+            resolve("Done");
+          },
+          error: (err) => {
+            reject("Unable to send message:" + err);
+          },
+        });
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
 
-        // Send the HTTP request to the Messenger Platform
+
+  /**
+   * Get username of user
+   */
+  async getFacebookUsername(sender_psid){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = `https://graph.facebook.com/${sender_psid}?fields=first_name,last_name,profile_pic&access_token=${this.PAGE_ACCESS_TOKEN}`;
+        const res = await this.httpService.get(url).toPromise();
+        const body = res.data;
+        let username = `${body.last_name} ${body.first_name}`;
+        resolve(username);
+
         // request(
         //   {
         //     uri: url,
-        //     method: "POST",
-        //     json: request_body,
+        //     method: "GET",
         //   },
         //   (err, res, body) => {
         //     if (!err) {
-        //       resolve("Done");
+        //       body = JSON.parse(body);
+        //       let username = `${body.last_name} ${body.first_name}`;
+        //       resolve(username);
         //     } else {
         //       reject("Unable to send message:" + err);
         //     }
@@ -262,5 +264,5 @@ export class AppService {
         reject(e);
       }
     });
-  }
+  };
 }
