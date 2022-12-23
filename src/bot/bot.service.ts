@@ -8,33 +8,32 @@ dotenv.config();
 @Injectable()
 export class BotService {
   private PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+  private carts = [];
 
-  constructor(
-    private httpService: HttpService
-  ) {}
+  constructor(private httpService: HttpService) {}
 
-    /**
+  /**
    * Get username of user
    */
-    async getFacebookUsername(sender_psid) {
-      return new Promise(async (resolve, reject) => {
-        try {
-          let url = `https://graph.facebook.com/${sender_psid}?fields=first_name,last_name,profile_pic&access_token=${this.PAGE_ACCESS_TOKEN}`;
-          const res = await this.httpService.get(url).toPromise();
-          const body = res.data;
-          let username = `${body.last_name} ${body.first_name}`;
-          resolve(username);
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }
+  async getFacebookUsername(sender_psid) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = `https://graph.facebook.com/${sender_psid}?fields=first_name,last_name,profile_pic&access_token=${this.PAGE_ACCESS_TOKEN}`;
+        const res = await this.httpService.get(url).toPromise();
+        const body = res.data;
+        let username = `${body.last_name} ${body.first_name}`;
+        resolve(username);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
 
-    /**
-     * send welcome message
-     * @param sender_psid 
-     * @returns 
-     */
+  /**
+   * send welcome message
+   * @param sender_psid
+   * @returns
+   */
   async sendMessageWelcomeNewUser(sender_psid) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -76,7 +75,7 @@ export class BotService {
             {
               content_type: "text",
               title: "Talk with customer service",
-              payload: "TALK_AGENT",
+              payload: "CUSTOMER_SERVICE",
             },
           ],
         };
@@ -92,12 +91,11 @@ export class BotService {
     });
   }
 
-
   /**
-   * Send message function 
-   * @param sender_psid 
-   * @param response 
-   * @returns 
+   * Send message function
+   * @param sender_psid
+   * @param response
+   * @returns
    */
   async sendMessage(sender_psid, response) {
     return new Promise(async (resolve, reject) => {
@@ -116,7 +114,10 @@ export class BotService {
 
         // Send the HTTP request to the Messenger Platform
         this.httpService
-          .post( `https://graph.facebook.com/v6.0/me/messages?access_token=${this.PAGE_ACCESS_TOKEN}`, request_body)
+          .post(
+            `https://graph.facebook.com/v6.0/me/messages?access_token=${this.PAGE_ACCESS_TOKEN}`,
+            request_body
+          )
           .subscribe({
             complete: () => {
               resolve("done");
@@ -131,9 +132,19 @@ export class BotService {
     });
   }
 
-  requestTalkToAgent(sender_psid) {
-    return new Promise((resolve, reject) => {
+  /**
+   * Function to hand over to customer service .
+   * @param sender_psid
+   * @returns
+   */
+  talkToCustomerService(sender_psid) {
+    return new Promise(async (resolve, reject) => {
       try {
+        let response = {
+          text: "Thanks for visiting us. you're now being transferred to a customer service agent. kindly leave your message. If you need to browse shop again kinly restart this conversation using the menu",
+        };
+
+        await this.sendMessage(sender_psid, response);
         resolve("done");
       } catch (e) {
         reject(e);
@@ -141,6 +152,11 @@ export class BotService {
     });
   }
 
+  /**
+   * Send products
+   * @param sender_psid
+   * @returns
+   */
   sendProducts(sender_psid) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -155,28 +171,11 @@ export class BotService {
     });
   }
 
-  sendLookupOrder(sender_psid) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let response = TemplateMessage.sendLookupOrderTemplate();
-        await this.sendMessage(sender_psid, response);
-        resolve("done");
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-
-  setInfoOrderByWebView(sender_psid) {
-    return new Promise((resolve, reject) => {
-      try {
-        resolve("done");
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-
+  /**
+   * Main menu
+   * @param sender_psid
+   * @returns
+   */
   backToMainMenu(sender_psid) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -189,10 +188,6 @@ export class BotService {
       }
     });
   }
-
-
-
- 
 
   /**
    * Typing request
@@ -226,11 +221,10 @@ export class BotService {
     });
   }
 
-
   /**
    * mark message as read
-   * @param sender_psid 
-   * @returns 
+   * @param sender_psid
+   * @returns
    */
   markMessageRead(sender_psid: any) {
     return new Promise((resolve, reject) => {
@@ -252,6 +246,127 @@ export class BotService {
             reject(err);
           },
         });
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  /**
+   * Add cart item
+   */
+  async addItemToCart(sender_psid, payload?: any) {
+    let userCart = this.carts.find((item) => item.userId === sender_psid);
+
+    if (!userCart) {
+      this.carts.push({
+        userId: sender_psid,
+        products: [{ name: "test", qty: 1 }],
+      });
+    }
+
+    let response = {
+      template_type: "button",
+      text: "Item added to cart successfully",
+      buttons: [
+        {
+          type: "postback",
+          title: "View cart",
+          payload: "MY_CART",
+        },
+        {
+          type: "postback",
+          title: "Continue shopping",
+          payload: "PRODUCTS",
+        },
+      ],
+    };
+
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.sendMessage(sender_psid, response);
+        resolve("done");
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  /**
+   * Send user cart
+   */
+  getCart(sender_psid: any) {
+    // cart schema
+    let cartSchemaSample = [
+      {
+        userId: "idjdafj",
+        products: [{ name: "pq", qty: 1 }],
+      },
+    ];
+
+    let userCart = this.carts.find((item) => item.userId === sender_psid);
+
+    let response = {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "receipt",
+          recipient_name: "Stephane Crozatier",
+          order_number: "12345678902",
+          currency: "USD",
+          payment_method: "Visa 2345",
+          order_url: "http://originalcoastclothing.com/order?order_id=123456",
+          timestamp: "1428444852",
+          address: {
+            street_1: "1 Hacker Way",
+            street_2: "",
+            city: "Menlo Park",
+            postal_code: "94025",
+            state: "CA",
+            country: "US",
+          },
+          summary: {
+            subtotal: 75.0,
+            shipping_cost: 4.95,
+            total_tax: 6.19,
+            total_cost: 56.14,
+          },
+          adjustments: [
+            {
+              name: "New Customer Discount",
+              amount: 20,
+            },
+            {
+              name: "$10 Off Coupon",
+              amount: 10,
+            },
+          ],
+          elements: [
+            {
+              title: "Classic White T-Shirt",
+              subtitle: "100% Soft and Luxurious Cotton",
+              quantity: 2,
+              price: 50,
+              currency: "USD",
+              image_url: "http://originalcoastclothing.com/img/whiteshirt.png",
+            },
+            {
+              title: "Classic Gray T-Shirt",
+              subtitle: "100% Soft and Luxurious Cotton",
+              quantity: 1,
+              price: 25,
+              currency: "USD",
+              image_url: "http://originalcoastclothing.com/img/grayshirt.png",
+            },
+          ],
+        },
+      },
+    };
+
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.sendMessage(sender_psid, response);
+        resolve("done");
       } catch (e) {
         reject(e);
       }

@@ -119,7 +119,7 @@ export const TemplateMessage = {
         {
           content_type: "text",
           title: "Talk with customer service",
-          payload: "TALK_AGENT",
+          payload: "CUSTOMER_SERVICE",
         },
       ],
     };

@@ -92,9 +92,9 @@ export class AppService {
       if (payload === "PRODUCTS") {
         await this.botService.sendProducts(sender_psid);
       } else if (payload === "MY_CART") {
-        await this.botService.sendLookupOrder(sender_psid);
-      } else if (payload === "TALK_AGENT") {
-        await this.botService.requestTalkToAgent(sender_psid);
+        // await this.botService.sendLookupOrder(sender_psid);
+      } else if (payload === "CUSTOMER_SERVICE") {
+        await this.botService.talkToCustomerService(sender_psid);
       }
 
       return;
@@ -130,14 +130,16 @@ export class AppService {
       case "RESTART_CONVERSATION":
         await this.botService.sendMessageWelcomeNewUser(sender_psid);
         break;
-      case "TALK_AGENT":
-        await this.botService.requestTalkToAgent(sender_psid);
+      case "CUSTOMER_SERVICE":
+        await this.botService.talkToCustomerService(sender_psid);
         break;
       case "BACK_TO_CATEGORIES":
         await this.botService.sendProducts(sender_psid);
         break;
-      case "SET_INFO_ORDER":
-        await this.botService.setInfoOrderByWebView(sender_psid);
+      case "MY_CART":
+        // await this.botService.setInfoOrderByWebView(sender_psid);
+        break;
+      case "ADD_CART":
         break;
       case "BACK_TO_MAIN_MENU":
         await this.botService.backToMainMenu(sender_psid);
@@ -195,7 +197,7 @@ export class AppService {
                 {
                   type: "postback",
                   title: "Talk to customer service",
-                  payload: "TALK_AGENT",
+                  payload: "CUSTOMER_SERVICE",
                 },
                 {
                   type: "postback",
