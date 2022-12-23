@@ -36,6 +36,7 @@ export class BotService {
      * @returns 
      */
   async sendMessageWelcomeNewUser(sender_psid) {
+    console.log("CHECK 1")
     return new Promise(async (resolve, reject) => {
       try {
         let username = await this.getFacebookUsername(sender_psid);
@@ -81,6 +82,8 @@ export class BotService {
           ],
         };
 
+        console.log("CHECK 2")
+
         await this.sendMessage(sender_psid, response1);
         await this.sendMessage(sender_psid, response2);
         await this.sendMessage(sender_psid, response3);
@@ -93,6 +96,7 @@ export class BotService {
   }
 
   async sendMessage(sender_psid, response) {
+    console.log("CHECK 3")
     return new Promise(async (resolve, reject) => {
       try {
         //mark message as read
@@ -109,12 +113,12 @@ export class BotService {
 
         // Send the HTTP request to the Messenger Platform
         this.httpService
-          .post("https://graph.facebook.com/v6.0/me/messages", request_body)
+          .post( `https://graph.facebook.com/v6.0/me/messages?access_token=${this.PAGE_ACCESS_TOKEN}`, request_body)
           .subscribe({
-            complete() {
+            complete: () => {
               resolve("done");
             },
-            error(err) {
+            error: (err) => {
               reject(err);
             },
           });

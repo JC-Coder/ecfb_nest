@@ -80,10 +80,7 @@ export class AppService {
    * @param sender_psid
    * @param received_message
    */
-  async handleMessage(
-    sender_psid,
-    received_message
-  ): Promise<Promise<Promise<any>>> {
+  async handleMessage(sender_psid, received_message) {
     // handle quick replies
     if (
       received_message &&
@@ -123,7 +120,6 @@ export class AppService {
    * @param received_postback
    */
   async handlePostback(sender_psid, received_postback) {
-
     // Get the payload for the postback
     let payload = received_postback.payload;
 
@@ -155,7 +151,7 @@ export class AppService {
       case "BACK_TO_MAIN_MENU":
         await this.botService.backToMainMenu(sender_psid);
         break;
-  
+
       default:
         console.log("run default switch case ");
     }
@@ -224,7 +220,7 @@ export class AppService {
               ],
             },
           ],
-          whitelisted_domains: ["https://ecfb-nest-jc.adaptable.app/"],
+          whitelisted_domains: ["https://ecfb-nest-jc.adaptable.app"],
         };
 
         // send the HTTP request to the messenger platform
@@ -241,6 +237,4 @@ export class AppService {
       }
     });
   }
-
- 
 }
