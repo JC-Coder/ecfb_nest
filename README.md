@@ -74,7 +74,7 @@ A Facebook page and a Facebook App with Messenger integration set up.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [Twitter Jc-coder](https://twitter.com/jc_coder1) 
+Twitter profile - [@Jc-coder](https://twitter.com/jc_coder1) 
 
 Project Link: [https://github.com/JC-Coder/ecfb_nest](https://github.com/JC-Coder/ecfb_nest.git)
 
