@@ -344,4 +344,54 @@ export class BotService {
       }
     });
   }
+
+
+  /**
+   * Checkout function 
+   */
+  async checkout(sender_psid: any){
+    this.carts = this.carts.filter(item => item.userId === sender_psid);
+
+    let response1 = {
+      text: "Order Processing........."
+    }
+
+    let response2 = {
+      text: "Order Processed .........\n Kindly check your email for your order details. "
+    }
+
+
+    let response3 = {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "button",
+          text: `Thanks for shopping with us `,
+          buttons: [
+            {
+              type: "postback",
+              title: "Main Menu",
+              payload: "BACK_TO_MAIN_MENU",
+            },
+            {
+              type: "postback",
+              title: "Browse products",
+              payload: "PRODUCTS",
+            },
+          ],
+        },
+      },
+    };
+
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.sendMessage(sender_psid, response1);
+        await this.sendMessage(sender_psid, response2);
+        await this.sendMessage(sender_psid, response3);
+        resolve("done");
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
 }

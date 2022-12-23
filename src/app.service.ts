@@ -138,6 +138,9 @@ export class AppService {
       case "BACK_TO_MAIN_MENU":
         await this.botService.backToMainMenu(sender_psid);
         break;
+      case "CHECKOUT":
+        await this.botService.checkout(sender_psid);
+        break;
 
       default:
         console.log("run default switch case ");
