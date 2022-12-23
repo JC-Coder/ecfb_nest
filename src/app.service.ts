@@ -130,6 +130,9 @@ export class AppService {
       case "RESTART_CONVERSATION":
         await this.botService.sendMessageWelcomeNewUser(sender_psid);
         break;
+      case "PRODUCTS":
+        await this.botService.sendProducts(sender_psid);
+        break;
       case "CUSTOMER_SERVICE":
         await this.botService.talkToCustomerService(sender_psid);
         break;
