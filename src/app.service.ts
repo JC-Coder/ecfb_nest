@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import { Request, Response } from "express";
 import { HttpService } from "@nestjs/axios";
 import { BotService } from "./bot/bot.service";
+import axios, { Axios } from "axios";
 
 dotenv.config();
 
@@ -99,19 +100,6 @@ export class AppService {
 
       return;
     }
-
-    // let response;
-
-    // // Check if the message contains text
-    // if (received_message.text) {
-    //   // Create the payload for a basic text message
-    //   response = {
-    //     text: `Sorry i don't understand that command`,
-    //   };
-    // }
-
-    // Sends the response message
-    // this.callSendAPI(sender_psid, response);
   }
 
   /**
@@ -143,7 +131,7 @@ export class AppService {
         await this.botService.getCart(sender_psid);
         break;
       case "ADD_CART":
-        console.log("ADD CART PAYLOAD====================")
+        console.log("ADD CART PAYLOAD====================");
         console.log(received_postback);
         await this.botService.addItemToCart(sender_psid);
         break;
