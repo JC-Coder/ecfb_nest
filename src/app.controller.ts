@@ -1,7 +1,6 @@
 import { Controller, Get, Param, Post, Render, Req, Res } from "@nestjs/common";
 import { Request, Response } from "express";
 import { AppService } from "./app.service";
-import request from "request";
 import * as dotenv from "dotenv";
 
 dotenv.config();

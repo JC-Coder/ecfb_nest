@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import request from "request";
 import * as dotenv from "dotenv";
 import { Request, Response } from "express";
 import { HttpService } from "@nestjs/axios";

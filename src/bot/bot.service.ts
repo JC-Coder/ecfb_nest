@@ -13,14 +13,36 @@ export class BotService {
     private httpService: HttpService
   ) {}
 
-  sendMessageWelcomeNewUser(sender_psid) {
+    /**
+   * Get username of user
+   */
+    async getFacebookUsername(sender_psid) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let url = `https://graph.facebook.com/${sender_psid}?fields=first_name,last_name,profile_pic&access_token=${this.PAGE_ACCESS_TOKEN}`;
+          const res = await this.httpService.get(url).toPromise();
+          const body = res.data;
+          let username = `${body.last_name} ${body.first_name}`;
+          resolve(username);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    /**
+     * send welcome message
+     * @param sender_psid 
+     * @returns 
+     */
+  async sendMessageWelcomeNewUser(sender_psid) {
     return new Promise(async (resolve, reject) => {
       try {
         let username = await this.getFacebookUsername(sender_psid);
 
         // send text message
         let response1 = {
-          text: `Hi ${username} Welcome to tech shop haryphamdev, where you will find what you need`,
+          text: `Hi ${username} Welcome to tech shop , where you will find what you need`,
         };
 
         // send an image
@@ -195,22 +217,7 @@ export class BotService {
 
 
 
-   /**
-   * Get username of user
-   */
-   async getFacebookUsername(sender_psid) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let url = `https://graph.facebook.com/${sender_psid}?fields=first_name,last_name,profile_pic&access_token=${this.PAGE_ACCESS_TOKEN}`;
-        const res = await this.httpService.get(url).toPromise();
-        const body = res.data;
-        let username = `${body.last_name} ${body.first_name}`;
-        resolve(username);
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
+ 
 
   /**
    * Typing request
