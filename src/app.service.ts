@@ -100,18 +100,18 @@ export class AppService {
       return;
     }
 
-    let response;
+    // let response;
 
-    // Check if the message contains text
-    if (received_message.text) {
-      // Create the payload for a basic text message
-      response = {
-        text: `Sorry i don't understand that command`,
-      };
-    }
+    // // Check if the message contains text
+    // if (received_message.text) {
+    //   // Create the payload for a basic text message
+    //   response = {
+    //     text: `Sorry i don't understand that command`,
+    //   };
+    // }
 
     // Sends the response message
-    this.callSendAPI(sender_psid, response);
+    // this.callSendAPI(sender_psid, response);
   }
 
   /**
@@ -140,6 +140,8 @@ export class AppService {
         await this.botService.getCart(sender_psid);
         break;
       case "ADD_CART":
+        console.log("ADD CART PAYLOAD====================")
+        console.log(received_postback);
         await this.botService.addItemToCart(sender_psid);
         break;
       case "BACK_TO_MAIN_MENU":

@@ -78,29 +78,29 @@ export const TemplateMessage = {
     };
   },
 
-  sendLookupOrderTemplate() {
-    return {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "button",
-          text: "OK. Let's set info about your order so i won't need to ask for them in the future.",
-          buttons: [
-            {
-              type: "postback",
-              title: "Set info",
-              payload: "SET_INFO_ORDER",
-            },
-            {
-              type: "postback",
-              title: "Main menu",
-              payload: "BACK_TO_MAIN_MENU",
-            },
-          ],
-        },
-      },
-    };
-  },
+//   sendLookupOrderTemplate() {
+//     return {
+//       attachment: {
+//         type: "template",
+//         payload: {
+//           template_type: "button",
+//           text: "OK. Let's set info about your order so i won't need to ask for them in the future.",
+//           buttons: [
+//             {
+//               type: "postback",
+//               title: "Set info",
+//               payload: "SET_INFO_ORDER",
+//             },
+//             {
+//               type: "postback",
+//               title: "Main menu",
+//               payload: "BACK_TO_MAIN_MENU",
+//             },
+//           ],
+//         },
+//       },
+//     };
+//   },
 
   backToMainMenuTemplate() {
     return {
