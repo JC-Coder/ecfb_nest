@@ -256,34 +256,37 @@ export class BotService {
    * Add cart item
    */
   async addItemToCart(sender_psid, payload?: any) {
-    let userCart = this.carts.find((item) => item.userId === sender_psid);
-
-    if (!userCart) {
-      this.carts.push({
-        userId: sender_psid,
-        products: [{ name: "test", qty: 1 }],
-      });
-    }
-
-    let response = {
-      template_type: "button",
-      text: "Item added to cart successfully",
-      buttons: [
-        {
-          type: "postback",
-          title: "View cart",
-          payload: "MY_CART",
-        },
-        {
-          type: "postback",
-          title: "Continue shopping",
-          payload: "PRODUCTS",
-        },
-      ],
-    };
-
     return new Promise(async (resolve, reject) => {
       try {
+        let userCart = this.carts.find((item) => item.userId === sender_psid);
+        console.log("CART CHECKPOINT==================");
+        console.log(userCart);
+        console.log(sender_psid);
+
+        if (!userCart) {
+          this.carts.push({
+            userId: sender_psid,
+            products: [{ name: "test", qty: 1 }],
+          });
+        }
+
+        let response = {
+          template_type: "button",
+          text: "Item added to cart successfully",
+          buttons: [
+            {
+              type: "postback",
+              title: "View cart",
+              payload: "MY_CART",
+            },
+            {
+              type: "postback",
+              title: "Continue shopping",
+              payload: "PRODUCTS",
+            },
+          ],
+        };
+
         await this.sendMessage(sender_psid, response);
         resolve("done");
       } catch (e) {

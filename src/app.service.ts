@@ -197,6 +197,11 @@ export class AppService {
               call_to_actions: [
                 {
                   type: "postback",
+                  title: "Browse Products",
+                  payload: "PRODUCTS",
+                },
+                {
+                  type: "postback",
                   title: "Talk to customer service",
                   payload: "CUSTOMER_SERVICE",
                 },
