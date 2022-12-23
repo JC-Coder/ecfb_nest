@@ -17,14 +17,9 @@ export const TemplateMessage = {
               },
               buttons: [
                 {
-                  type: "web_url",
-                  url: "https://bit.ly/webHeadphones",
-                  title: "View on Website",
-                },
-                {
                   type: "postback",
-                  title: "Show Headphones",
-                  payload: "SHOW_HEADPHONES",
+                  title: "Add to cart",
+                  payload: "ADD_CART",
                 },
                 {
                   type: "postback",
@@ -44,14 +39,9 @@ export const TemplateMessage = {
               },
               buttons: [
                 {
-                  type: "web_url",
-                  url: "https://bit.ly/webTelevision",
-                  title: "View on Website",
-                },
-                {
                   type: "postback",
-                  title: "Show TVs",
-                  payload: "SHOW_TV",
+                  title: "Add to cart",
+                  payload: "ADD_CART",
                 },
                 {
                   type: "postback",
@@ -71,14 +61,9 @@ export const TemplateMessage = {
               },
               buttons: [
                 {
-                  type: "web_url",
-                  url: "https://bit.ly/webPlaystation",
-                  title: "View on Website",
-                },
-                {
                   type: "postback",
-                  title: "Show Playstation",
-                  payload: "SHOW_PLAYSTATION",
+                  title: "Add to cart",
+                  payload: "ADD_CART",
                 },
                 {
                   type: "postback",
