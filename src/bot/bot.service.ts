@@ -1,6 +1,7 @@
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import * as dotenv from "dotenv";
+import { findIndex } from "rxjs";
 import { TemplateMessage } from "../templates/template";
 
 dotenv.config();
@@ -268,6 +269,12 @@ export class BotService {
             userId: sender_psid,
             products: [{ name: "test", qty: 1 }],
           });
+        } else {
+          this.carts.forEach(item => {
+            if(item.userId == sender_psid){
+              item.products.push({ name: "test", qty: 1 })
+            }
+          })
         }
 
         let response = {
@@ -304,67 +311,24 @@ export class BotService {
    * Send user cart
    */
   getCart(sender_psid: any) {
-    // cart schema
-    let cartSchemaSample = [
-      {
-        userId: "idjdafj",
-        products: [{ name: "pq", qty: 1 }],
-      },
-    ];
-
     let userCart = this.carts.find((item) => item.userId === sender_psid);
 
     let response = {
       attachment: {
         type: "template",
         payload: {
-          template_type: "receipt",
-          recipient_name: "Stephane Crozatier",
-          order_number: "12345678902",
-          currency: "USD",
-          payment_method: "Visa 2345",
-          order_url: "http://originalcoastclothing.com/order?order_id=123456",
-          timestamp: "1428444852",
-          address: {
-            street_1: "1 Hacker Way",
-            street_2: "",
-            city: "Menlo Park",
-            postal_code: "94025",
-            state: "CA",
-            country: "US",
-          },
-          summary: {
-            subtotal: 75.0,
-            shipping_cost: 4.95,
-            total_tax: 6.19,
-            total_cost: 56.14,
-          },
-          adjustments: [
+          template_type: "button",
+          text: `You have total: ${userCart.products.length} cart items`,
+          buttons: [
             {
-              name: "New Customer Discount",
-              amount: 20,
+              type: "postback",
+              title: "Checkout",
+              payload: "CHECKOUT",
             },
             {
-              name: "$10 Off Coupon",
-              amount: 10,
-            },
-          ],
-          elements: [
-            {
-              title: "Classic White T-Shirt",
-              subtitle: "100% Soft and Luxurious Cotton",
-              quantity: 2,
-              price: 50,
-              currency: "USD",
-              image_url: "http://originalcoastclothing.com/img/whiteshirt.png",
-            },
-            {
-              title: "Classic Gray T-Shirt",
-              subtitle: "100% Soft and Luxurious Cotton",
-              quantity: 1,
-              price: 25,
-              currency: "USD",
-              image_url: "http://originalcoastclothing.com/img/grayshirt.png",
+              type: "postback",
+              title: "Continue shopping",
+              payload: "PRODUCTS",
             },
           ],
         },
