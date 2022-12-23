@@ -92,7 +92,7 @@ export class AppService {
       if (payload === "PRODUCTS") {
         await this.botService.sendProducts(sender_psid);
       } else if (payload === "MY_CART") {
-        // await this.botService.sendLookupOrder(sender_psid);
+        await this.botService.getCart(sender_psid);
       } else if (payload === "CUSTOMER_SERVICE") {
         await this.botService.talkToCustomerService(sender_psid);
       }
@@ -137,9 +137,10 @@ export class AppService {
         await this.botService.sendProducts(sender_psid);
         break;
       case "MY_CART":
-        // await this.botService.setInfoOrderByWebView(sender_psid);
+        await this.botService.getCart(sender_psid);
         break;
       case "ADD_CART":
+        await this.botService.addItemToCart(sender_psid);
         break;
       case "BACK_TO_MAIN_MENU":
         await this.botService.backToMainMenu(sender_psid);
