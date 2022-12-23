@@ -89,9 +89,9 @@ export class AppService {
     ) {
       let payload = received_message.quick_reply.payload;
 
-      if (payload === "CATEGORIES") {
-        await this.botService.sendCategories(sender_psid);
-      } else if (payload === "LOOKUP_ORDER") {
+      if (payload === "PRODUCTS") {
+        await this.botService.sendProducts(sender_psid);
+      } else if (payload === "MY_CART") {
         await this.botService.sendLookupOrder(sender_psid);
       } else if (payload === "TALK_AGENT") {
         await this.botService.requestTalkToAgent(sender_psid);
@@ -133,17 +133,8 @@ export class AppService {
       case "TALK_AGENT":
         await this.botService.requestTalkToAgent(sender_psid);
         break;
-      case "SHOW_HEADPHONES":
-        await this.botService.showHeadphones(sender_psid);
-        break;
-      case "SHOW_TV":
-        await this.botService.showTvs(sender_psid);
-        break;
-      case "SHOW_PLAYSTATION":
-        await this.botService.showPlaystations(sender_psid);
-        break;
       case "BACK_TO_CATEGORIES":
-        await this.botService.sendCategories(sender_psid);
+        await this.botService.sendProducts(sender_psid);
         break;
       case "SET_INFO_ORDER":
         await this.botService.setInfoOrderByWebView(sender_psid);

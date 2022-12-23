@@ -36,14 +36,13 @@ export class BotService {
      * @returns 
      */
   async sendMessageWelcomeNewUser(sender_psid) {
-    console.log("CHECK 1")
     return new Promise(async (resolve, reject) => {
       try {
         let username = await this.getFacebookUsername(sender_psid);
 
         // send text message
         let response1 = {
-          text: `Hi ${username} Welcome to tech shop , where you will find what you need`,
+          text: `Hi ${username}! Welcome to our online store. Jc store is your no 1 store to get quality products`,
         };
 
         // send an image
@@ -51,38 +50,36 @@ export class BotService {
           attachment: {
             type: "image",
             payload: {
-              url: "https://iili.io/HzPOyoQ.jpg",
+              url: "https://iili.io/HzmOQn9.png",
             },
           },
         };
 
         let response3 = {
-          text: "At any time, use the menu below to navigate through the features",
+          text: "We have lots of amazing products in store for you",
         };
 
         //send a quick reply
         let response4 = {
-          text: "What can i do to help you today ",
+          text: "Kindly navigate our store with the menu below",
           quick_replies: [
             {
               content_type: "text",
-              title: "Categories",
-              payload: "CATEGORIES",
+              title: "Browse Products",
+              payload: "PRODUCTS",
             },
             {
               content_type: "text",
-              title: "Lookup Order",
-              payload: "LOOKUP_ORDER",
+              title: "My cart",
+              payload: "MY_CART",
             },
             {
               content_type: "text",
-              title: "Talk to an agent",
+              title: "Talk with customer service",
               payload: "TALK_AGENT",
             },
           ],
         };
-
-        console.log("CHECK 2")
 
         await this.sendMessage(sender_psid, response1);
         await this.sendMessage(sender_psid, response2);
@@ -95,8 +92,14 @@ export class BotService {
     });
   }
 
+
+  /**
+   * Send message function 
+   * @param sender_psid 
+   * @param response 
+   * @returns 
+   */
   async sendMessage(sender_psid, response) {
-    console.log("CHECK 3")
     return new Promise(async (resolve, reject) => {
       try {
         //mark message as read
@@ -138,11 +141,11 @@ export class BotService {
     });
   }
 
-  sendCategories(sender_psid) {
+  sendProducts(sender_psid) {
     return new Promise(async (resolve, reject) => {
       try {
         // send a generic messagee
-        let response = TemplateMessage.sendCategoriesTemplate();
+        let response = TemplateMessage.sendProductsTemplate();
 
         await this.sendMessage(sender_psid, response);
         resolve("done");
@@ -157,38 +160,6 @@ export class BotService {
       try {
         let response = TemplateMessage.sendLookupOrderTemplate();
         await this.sendMessage(sender_psid, response);
-        resolve("done");
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-
-  showHeadphones(sender_psid) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let response = TemplateMessage.sendHeadphonesTemplate();
-        await this.sendMessage(sender_psid, response);
-        resolve("done");
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-
-  showTvs(sender_psid) {
-    return new Promise((resolve, reject) => {
-      try {
-        resolve("done");
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-
-  showPlaystations(sender_psid) {
-    return new Promise((resolve, reject) => {
-      try {
         resolve("done");
       } catch (e) {
         reject(e);
@@ -255,6 +226,12 @@ export class BotService {
     });
   }
 
+
+  /**
+   * mark message as read
+   * @param sender_psid 
+   * @returns 
+   */
   markMessageRead(sender_psid: any) {
     return new Promise((resolve, reject) => {
       try {

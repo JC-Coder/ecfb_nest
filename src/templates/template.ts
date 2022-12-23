@@ -1,5 +1,5 @@
 export const TemplateMessage = {
-  sendCategoriesTemplate: () => {
+  sendProductsTemplate: () => {
     return {
       attachment: {
         type: "template",
@@ -93,101 +93,6 @@ export const TemplateMessage = {
     };
   },
 
-  sendHeadphonesTemplate() {
-    return {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: [
-            {
-              title: "Sony Noise Cancelling Headphones WH1000XM3",
-              image_url: "https://bit.ly/imageHeadphone1a",
-              subtitle: "$348.00",
-              default_action: {
-                type: "web_url",
-                url: "https://bit.ly/viewHeadphone1",
-                webview_height_ratio: "tall",
-              },
-              buttons: [
-                {
-                  type: "web_url",
-                  url: "https://bit.ly/viewHeadphone1",
-                  title: "Order now",
-                },
-                {
-                  type: "postback",
-                  title: "Back to categories",
-                  payload: "BACK_TO_CATEGORIES",
-                },
-                {
-                  type: "postback",
-                  title: "Main menu",
-                  payload: "BACK_TO_MAIN_MENU",
-                },
-              ],
-            },
-            {
-              title:
-                "Sony WI-1000XM2 Industry Leading Noise Canceling Wireless Behind-Neck",
-              image_url: "https://bit.ly/imageHeadphone1b",
-              subtitle: "$298.00",
-              default_action: {
-                type: "web_url",
-                url: "https://bit.ly/viewHeadphone2",
-                webview_height_ratio: "tall",
-              },
-              buttons: [
-                {
-                  type: "web_url",
-                  url: "https://bit.ly/viewHeadphone2",
-                  title: "Order now",
-                },
-                {
-                  type: "postback",
-                  title: "Back to categories",
-                  payload: "BACK_TO_CATEGORIES",
-                },
-                {
-                  type: "postback",
-                  title: "Main menu",
-                  payload: "BACK_TO_MAIN_MENU",
-                },
-              ],
-            },
-            {
-              title: "Sony Wireless in-Ear Headset",
-              image_url: "https://bit.ly/imageHeadphone1c",
-              subtitle: "$38.00",
-              default_action: {
-                type: "web_url",
-                url: "https://bit.ly/viewHeadphone3",
-                webview_height_ratio: "tall",
-              },
-              buttons: [
-                {
-                  type: "web_url",
-                  url: "https://bit.ly/viewHeadphone3",
-                  title: "Order now",
-                },
-                {
-                  type: "postback",
-                  title: "Back to categories",
-                  payload: "BACK_TO_CATEGORIES",
-                },
-                {
-                  type: "postback",
-                  title: "Main menu",
-                  payload: "BACK_TO_MAIN_MENU",
-                },
-              ],
-            },
-          ],
-        },
-      },
-    };
-  },
-
   sendLookupOrderTemplate() {
     return {
       attachment: {
@@ -214,21 +119,21 @@ export const TemplateMessage = {
 
   backToMainMenuTemplate() {
     return {
-      text: "What can i do to help you today ",
+      text: "Kindly navigate our store with the menu below",
       quick_replies: [
         {
           content_type: "text",
-          title: "Categories",
-          payload: "CATEGORIES",
+          title: "Browse Products",
+          payload: "PRODUCTS",
         },
         {
           content_type: "text",
-          title: "Lookup Order",
-          payload: "LOOKUP_ORDER",
+          title: "My cart",
+          payload: "MY_CART",
         },
         {
           content_type: "text",
-          title: "Talk to an agent",
+          title: "Talk with customer service",
           payload: "TALK_AGENT",
         },
       ],
