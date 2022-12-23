@@ -271,20 +271,25 @@ export class BotService {
         }
 
         let response = {
-          template_type: "button",
-          text: "Item added to cart successfully",
-          buttons: [
-            {
-              type: "postback",
-              title: "View cart",
-              payload: "MY_CART",
+          attachment: {
+            type: "template",
+            payload: {
+              template_type: "button",
+              text: "Item added to cart successfully",
+              buttons: [
+                {
+                  type: "postback",
+                  title: "View cart",
+                  payload: "MY_CART",
+                },
+                {
+                  type: "postback",
+                  title: "Continue shopping",
+                  payload: "PRODUCTS",
+                },
+              ],
             },
-            {
-              type: "postback",
-              title: "Continue shopping",
-              payload: "PRODUCTS",
-            },
-          ],
+          },
         };
 
         await this.sendMessage(sender_psid, response);
